@@ -33,5 +33,19 @@ async def on_ready():
     print(f'{bot.user} has connected to Discord!')
     channel = bot.get_channel(channel_id)
     await channel.send('Hello! I am now online!')
+    scheduled_event.start()
+
+
+#Scheduled Events
+from discord.ext import tasks
+from datetime import datetime
+
+@tasks.loop(seconds=120)  
+async def scheduled_event():
+    channel = bot.get_channel(channel_id)
+    await channel.send('Have a good day! This is the PhantomBot demo!')
+
 
 bot.run(token)
+
+
