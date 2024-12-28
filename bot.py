@@ -315,6 +315,37 @@ async def skip(ctx):
     else:
         await ctx.send("No music is currently playing.")
 
+
+# Random jokes
+jokes = [
+    "Why don't skeletons fight each other? They don't have the guts.",
+    "I told my wife she was drawing her eyebrows too high. She looked surprised.",
+    "Why don’t oysters donate to charity? Because they are shellfish.",
+    "I'm on a seafood diet. I see food and I eat it.",
+    "What do you call fake spaghetti? An impasta.",
+    "Why don’t seagulls fly over the bay? Because then they’d be bagels!",
+    "I told my computer I needed a break, and now it won’t stop sending me Kit-Kats.",
+    "Why was the math book sad? Because it had too many problems.",
+    "I used to play piano by ear, but now I use my hands.",
+    "What do you call a fish with no eyes? A fsh.",
+    "Why can’t your nose be 12 inches long? Because then it would be a foot.",
+    "I told my wife she was drawing her eyebrows too high. She seemed surprised.",
+    "Why don't eggs tell jokes? Because they'd crack each other up!",
+    "Why did the scarecrow win an award? Because he was outstanding in his field!",
+    "What did one ocean say to the other ocean? Nothing, they just waved.",
+    "I’m reading a book on anti-gravity. It’s impossible to put down!",
+    "Why don't skeletons ever use cell phones? They don’t have the guts.",
+    "I’m no good at math, but I know that 7 days without a pun makes one weak.",
+    "Why don’t some couples go to the gym? Because some relationships don’t work out.",
+    "What’s orange and sounds like a parrot? A carrot."
+]
+
+@bot.command()
+async def joke(ctx):
+    random_joke = random.choice(jokes)
+    await ctx.send(random_joke)
+
+
 bot.run(token)
 
 
