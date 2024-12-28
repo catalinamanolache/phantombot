@@ -52,6 +52,41 @@ async def remind(ctx, time: int, *, message):
     await asyncio.sleep(time)
     await ctx.send(f'Reminder: {message}')
 
+#Custom Responses
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
+
+    if "hello bot" in message.content.lower():
+        await message.channel.send("Hello there!")
+    elif "hi bot" in message.content.lower():
+        await message.channel.send("Hi! How can I assist you today?")
+    elif "good morning" in message.content.lower():
+        await message.channel.send("Good morning! Hope you have a great day ahead!")
+    elif "good evening" in message.content.lower():
+        await message.channel.send("Good evening! How's your day been?")
+    elif "what is your name" in message.content.lower():
+        await message.channel.send("I'm PhantomBot, nice to meet you! 😄")
+    elif "how are you" in message.content.lower():
+        await message.channel.send("I'm just a bot, but I'm doing great! How about you?")
+    elif "what can you do" in message.content.lower():
+        await message.channel.send("I can help with a variety of tasks, just ask away! 😉")
+    elif "help" in message.content.lower():
+        await message.channel.send("Here are some commands you can try:\n- 'hello bot' for a greeting\n- 'help' for assistance\n- 'goodbye' to say bye\n- Prefix is '!'")
+    elif "goodbye" in message.content.lower():
+        await message.channel.send("Goodbye! Take care! 👋")
+    elif "bye" in message.content.lower():
+        await message.channel.send("Bye! See you soon! 😊")
+
+
+    
+    await bot.process_commands(message)
+
+
+
 bot.run(token)
+
+
 
 
