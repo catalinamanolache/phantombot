@@ -177,6 +177,57 @@ async def quiz(ctx):
     except asyncio.TimeoutError:
         await ctx.send("You took too long to respond!")
 
+# Welcome Messages
+@bot.event
+async def on_member_join(member):
+    channel = bot.get_channel(channel_id)
+    await channel.send(f'Welcome to the server, {member.mention}!')
+
+#Moderation Commands
+@bot.command()
+@commands.has_permissions(kick_members=True)
+async def kick(ctx, member: discord.Member, *, reason=None):
+    await member.kick(reason=reason)
+    await ctx.send(f'{member} has been kicked.')
+
+@bot.command()
+@commands.has_permissions(ban_members=True)
+async def ban(ctx, member: discord.Member, *, reason=None):
+    await member.ban(reason=reason)
+    await ctx.send(f'{member} has been banned.')
+
+@bot.command()
+@commands.has_permissions(manage_roles=True)
+async def mute(ctx, member: discord.Member, *, reason=None):
+    mute_role = discord.utils.get(ctx.guild.roles, name="Muted")
+    if not mute_role:
+        mute_role = await ctx.guild.create_role(name="Muted")
+        for channel in ctx.guild.channels:
+            await channel.set_permissions(mute_role, speak=False, send_messages=False)
+    await member.add_roles(mute_role)
+    await ctx.send(f'{member} has been muted.')
+
+@bot.command()
+@commands.has_permissions(manage_roles=True)
+async def warn(ctx, member: discord.Member, *, reason=None):
+    await ctx.send(f'{member} has been warned for: {reason}')
+
+@bot.command()
+@commands.has_permissions(manage_roles=True)
+async def unmute(ctx, member: discord.Member):
+    """Dezactivează mutarea unui membru (îi permite să vorbească din nou)"""
+    mute_role = discord.utils.get(ctx.guild.roles, name="Muted")
+    
+    if mute_role not in member.roles:
+        await ctx.send(f'{member} is not muted.')
+        return
+
+    await member.remove_roles(mute_role)
+    await ctx.send(f'{member} Unmuted.')
+
+
+
+
 bot.run(token)
 
 
