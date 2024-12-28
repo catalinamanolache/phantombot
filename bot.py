@@ -1,9 +1,12 @@
-
+import asyncio
 import json
 import discord
 import os
+
 from discord.ext import commands
 from dotenv import load_dotenv
+from discord.ext import tasks
+from datetime import datetime
 
 # Load environment variables
 load_dotenv()
@@ -36,15 +39,18 @@ async def on_ready():
     scheduled_event.start()
 
 
-#Scheduled Events
-from discord.ext import tasks
-from datetime import datetime
-
+# Scheduled Events
 @tasks.loop(seconds=120)  
 async def scheduled_event():
     channel = bot.get_channel(channel_id)
     await channel.send('Have a good day! This is the PhantomBot demo!')
 
+# Reminder command with time and message
+@bot.command()
+async def remind(ctx, time: int, *, message):
+    await ctx.send(f'Reminder set for {time} seconds!')
+    await asyncio.sleep(time)
+    await ctx.send(f'Reminder: {message}')
 
 bot.run(token)
 
