@@ -2,6 +2,8 @@ import asyncio
 import json
 import random
 
+import yt_dlp
+import yt_dlp as youtube_dl
 import discord
 import os
 
@@ -226,7 +228,92 @@ async def unmute(ctx, member: discord.Member):
     await ctx.send(f'{member} Unmuted.')
 
 
+FFMPEG_OPTIONS = {
+    'before_options': '-reconnect 1 -reconnect_streamed 1 -reconnect_delay_max 5',
+    'options': '-vn'
+}
 
+@bot.command()
+async def join(ctx):
+    """Command to join the voice channel"""
+    if not ctx.author.voice:
+        await ctx.send("You need to join a voice channel first!")
+        return
+    channel = ctx.author.voice.channel
+    await channel.connect()
+
+@bot.command()
+async def play(ctx, url: str):
+    """Play a song from YouTube"""
+    # Check if the bot is connected to a voice channel
+    if not ctx.voice_client:
+        if not ctx.author.voice:
+            await ctx.send("You need to join a voice channel first!")
+            return
+        channel = ctx.author.voice.channel
+        await channel.connect()
+
+    ytdl_opts = {
+        'format': 'bestaudio/best',  # This will select the best audio format
+        'extractaudio': True,  # Ensures only audio is downloaded
+        'audioquality': 1,  # Highest audio quality
+        'outtmpl': 'downloads/%(id)s.%(ext)s',  # Save the audio in a specific directory
+        'restrictfilenames': True,  # Avoid spaces in file names
+        'noplaylist': True,  # Avoid downloading playlists
+        'quiet': False,  # Show verbose output for debugging
+    }
+
+    # Create a downloader object
+    ytdl = yt_dlp.YoutubeDL(ytdl_opts)
+
+    try:
+        # Use yt-dlp to extract audio URL
+        info_dict = ytdl.extract_info(url, download=False)
+        audio_url = info_dict['url']
+
+        # Play the audio using FFmpeg
+        ctx.voice_client.play(discord.FFmpegPCMAudio(audio_url, **FFMPEG_OPTIONS))
+
+        # Send a message about the song playing
+        await ctx.send(f"Now playing: {info_dict['title']}")
+    except Exception as e:
+        await ctx.send(f"An error occurred: {str(e)}")
+
+@bot.command()
+async def stop(ctx):
+    """Stop the music and disconnect from the voice channel"""
+    if ctx.voice_client:
+        await ctx.voice_client.disconnect()
+        await ctx.send("Disconnected from the voice channel.")
+    else:
+        await ctx.send("I'm not connected to any voice channel.")
+
+@bot.command()
+async def pause(ctx):
+    """Pause the music"""
+    if ctx.voice_client and ctx.voice_client.is_playing():
+        ctx.voice_client.pause()
+        await ctx.send("Music paused.")
+    else:
+        await ctx.send("No music is currently playing.")
+
+@bot.command()
+async def resume(ctx):
+    """Resume the paused music"""
+    if ctx.voice_client and ctx.voice_client.is_paused():
+        ctx.voice_client.resume()
+        await ctx.send("Music resumed.")
+    else:
+        await ctx.send("No music is currently paused.")
+
+@bot.command()
+async def skip(ctx):
+    """Skip the current song"""
+    if ctx.voice_client and ctx.voice_client.is_playing():
+        ctx.voice_client.stop()
+        await ctx.send("Music skipped.")
+    else:
+        await ctx.send("No music is currently playing.")
 
 bot.run(token)
 
