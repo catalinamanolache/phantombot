@@ -1,3 +1,4 @@
+
 import json
 import discord
 import os
@@ -7,8 +8,9 @@ from dotenv import load_dotenv
 # Load environment variables
 load_dotenv()
 
-# Get discord token
-token = os.getenv('DISCORD_TOKEN')
+# Get discord token and channel id
+token = os.getenv('token')
+channel_id = int(os.getenv('channel_id'))
 
 # Create bot instance
 intents = discord.Intents.default()
@@ -25,3 +27,11 @@ with open('config.json', 'r') as f:
 prefix = config['prefix']
 
 bot = commands.Bot(command_prefix=prefix, intents=intents)
+
+@bot.event
+async def on_ready():
+    print(f'{bot.user} has connected to Discord!')
+    channel = bot.get_channel(channel_id)
+    await channel.send('Hello! I am now online!')
+
+bot.run(token)
